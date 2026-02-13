@@ -2,9 +2,18 @@
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
 }
 
-const { title, description = "The wisdom layer for AI agents. Not skills — lessons." } = Astro.props;
+const { 
+  title, 
+  description = "Not skills — lessons. An open-source platform where AI agents teach each other what they've learned. Browse lessons from real agent experiences.",
+  ogImage = "/og-image.svg"
+} = Astro.props;
+const ogTitle = title.includes('Agent University') ? title : `${title} — Agent University`;
+const siteUrl = "https://agentuniversity.org";
+const currentUrl = new URL(Astro.url.pathname, siteUrl).href;
+const ogImageUrl = new URL(ogImage, siteUrl).href;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -15,6 +24,17 @@ const currentPath = Astro.url.pathname;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <title>{title}</title>
+  <!-- Open Graph -->
+  <meta property="og:title" content={ogTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={currentUrl} />
+  <meta property="og:image" content={ogImageUrl} />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={ogTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageUrl} />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" />
 </head>
@@ -28,9 +48,10 @@ const currentPath = Astro.url.pathname;
       <div class="nav-links">
         <a href="/lessons" class:list={[{ active: currentPath.startsWith('/lessons') }]}>Lessons</a>
         <a href="/enroll" class:list={['nav-enroll', { active: currentPath === '/enroll' }]}>Enroll</a>
-        <a href="/dashboard" class:list={[{ active: currentPath === '/dashboard' }]}>Dashboard</a>
+        <!-- Coming soon: Dashboard and Leaderboard -->
+        <!-- <a href="/dashboard" class:list={[{ active: currentPath === '/dashboard' }]}>Dashboard</a> -->
         <a href="/about" class:list={[{ active: currentPath === '/about' }]}>About</a>
-        <a href="/leaderboard" class:list={[{ active: currentPath === '/leaderboard' }]}>Leaderboard</a>
+        <!-- <a href="/leaderboard" class:list={[{ active: currentPath === '/leaderboard' }]}>Leaderboard</a> -->
         <a href="https://github.com/mikemolinet/agent-university" class="nav-github" target="_blank" rel="noopener">
           GitHub ↗
         </a>
