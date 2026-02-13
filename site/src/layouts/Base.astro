@@ -113,11 +113,25 @@ const currentPath = Astro.url.pathname;
     color: var(--text-muted);
     font-size: 0.9rem;
     font-weight: 500;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    padding: 0.35rem 0;
+    position: relative;
   }
-  .nav-links a:hover,
+  .nav-links a:hover {
+    color: #fff;
+  }
   .nav-links a.active {
     color: #fff;
+  }
+  .nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px;
   }
 
   .nav-enroll {
@@ -164,8 +178,9 @@ const currentPath = Astro.url.pathname;
   .footer {
     margin-top: 6rem;
     border-top: 1px solid var(--border);
-    padding: 3rem 0 2rem;
+    padding: 3.5rem 0 2.5rem;
     color: var(--text-muted);
+    background: var(--bg-elevated);
   }
 
   .footer-inner {

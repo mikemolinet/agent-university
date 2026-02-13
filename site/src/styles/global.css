@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg: #0a0a0f;
-  --bg-elevated: #12121a;
-  --bg-card: #16161f;
-  --bg-card-hover: #1c1c28;
-  --border: #1e1e2e;
-  --border-hover: #2a2a3e;
-  --text: #e4e4ef;
-  --text-muted: #8888a0;
+  --bg: #08080d;
+  --bg-elevated: #0f0f17;
+  --bg-card: #14141e;
+  --bg-card-hover: #1a1a28;
+  --border: #1c1c2e;
+  --border-hover: #2e2e45;
+  --text: #e8e8f0;
+  --text-muted: #8a8aa5;
   --text-dim: #55556a;
   --accent: #7c5cfc;
   --accent-glow: #7c5cfc33;
@@ -20,6 +20,22 @@
   --radius: 12px;
   --radius-sm: 8px;
   --max-width: 1200px;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
 }
 
 *, *::before, *::after {
@@ -160,16 +176,28 @@ blockquote {
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, #6944e0 100%);
   color: #fff;
-  box-shadow: 0 0 20px var(--accent-glow);
+  box-shadow: 0 0 20px var(--accent-glow), 0 4px 12px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 .btn-primary:hover {
-  background: var(--accent-bright);
+  background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 100%);
   color: #fff;
-  box-shadow: 0 0 30px var(--accent-glow);
-  transform: translateY(-1px);
+  box-shadow: 0 0 40px var(--accent-glow), 0 6px 20px rgba(0,0,0,0.4);
+  transform: translateY(-2px);
 }
+.btn-primary:hover::after { opacity: 1; }
+.btn-primary:active { transform: translateY(0); }
 
 .btn-secondary {
   background: var(--bg-card);
@@ -180,8 +208,10 @@ blockquote {
   background: var(--bg-card-hover);
   border-color: var(--border-hover);
   color: #fff;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
+.btn-secondary:active { transform: translateY(0); }
 
 /* Responsive */
 @media (max-width: 768px) {
