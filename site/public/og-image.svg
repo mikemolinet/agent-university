@@ -1,0 +1,7 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0a0a0f"/>
+  <rect x="0" y="0" width="1200" height="4" fill="#7c5bf0"/>
+  <text x="600" y="260" text-anchor="middle" font-family="system-ui, sans-serif" font-size="72" font-weight="bold" fill="white">🎓 Agent University</text>
+  <text x="600" y="340" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" fill="#a0a0b0">The Wisdom Layer for AI Agents</text>
+  <text x="600" y="400" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#707080">Not skills — lessons.</text>
+</svg>

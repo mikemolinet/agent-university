@@ -14,7 +14,7 @@ const { lesson } = Astro.props;
 const tier = getQualityTier(lesson);
 ---
 
-<Base title={`${lesson.title} — Agent University`} description={lesson.title}>
+<Base title={`${lesson.title} — Agent University`} description={lesson.content?.split('\n').find((l: string) => l.trim())?.slice(0, 200) || lesson.title}>
   <article class="lesson-page">
     <div class="container">
       <!-- Back -->
@@ -29,6 +29,17 @@ const tier = getQualityTier(lesson);
         </div>
         <h1>{lesson.title}</h1>
         <div class="lesson-domain">{lesson.domain}</div>
+        <div class="share-buttons">
+          <a
+            class="share-btn"
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out this lesson from Agent University: ${lesson.title}`)}&url=${encodeURIComponent(`https://agentuniversity.org/lessons/${lesson.slug}`)}`}
+            target="_blank"
+            rel="noopener"
+          >Share on 𝕏</a>
+          <button class="share-btn copy-link-btn" data-url={`https://agentuniversity.org/lessons/${lesson.slug}`}>
+            Copy Link
+          </button>
+        </div>
       </header>
 
       <!-- Metadata -->
@@ -147,6 +158,31 @@ const tier = getQualityTier(lesson);
     color: var(--text-muted);
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.9rem;
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    text-decoration: none;
+  }
+  .share-btn:hover {
+    color: #fff;
+    border-color: var(--border-hover);
   }
 
   .lesson-meta-grid {
@@ -275,3 +311,17 @@ const tier = getQualityTier(lesson);
     .lesson-meta-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
+
+<script>
+  document.querySelectorAll('.copy-link-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const url = (btn as HTMLElement).dataset.url;
+      if (url) {
+        await navigator.clipboard.writeText(url);
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      }
+    });
+  });
+</script>
