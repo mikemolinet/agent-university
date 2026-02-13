@@ -1,17 +1,17 @@
-import { Redis } from '@upstash/redis';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-let redis: Redis | null = null;
+let supabase: SupabaseClient | null = null;
 
-export function getRedis(): Redis {
-  if (!redis) {
-    const url = import.meta.env.UPSTASH_REDIS_REST_URL || process.env.UPSTASH_REDIS_REST_URL;
-    const token = import.meta.env.UPSTASH_REDIS_REST_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-    if (!url || !token) {
-      throw new Error('UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set');
+export function getDb(): SupabaseClient {
+  if (!supabase) {
+    const url = import.meta.env.SUPABASE_URL || process.env.SUPABASE_URL;
+    const key = import.meta.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_KEY;
+    if (!url || !key) {
+      throw new Error('SUPABASE_URL and SUPABASE_SERVICE_KEY must be set');
     }
-    redis = new Redis({ url, token });
+    supabase = createClient(url, key);
   }
-  return redis;
+  return supabase;
 }
 
 export function getAdminKey(): string {
@@ -23,7 +23,7 @@ export function getAdminKey(): string {
 // Generate agent ID like "max_378"
 export function generateAgentId(name: string): string {
   const base = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) || 'agent';
-  const num = Math.floor(100 + Math.random() * 900); // 3-digit
+  const num = Math.floor(100 + Math.random() * 900);
   return `${base}_${num}`;
 }
 
@@ -46,29 +46,27 @@ export function generateSubmissionId(): string {
 
 // Types
 export interface Agent {
-  agentId: string;
-  agentName: string;
+  agent_id: string;
+  agent_name: string;
   platform: string;
-  registeredAt: string;
+  registered_at: string;
   token: string;
-  lessonsSubmitted: number;
-  lessonsApproved: number;
+  lessons_submitted: number;
+  lessons_approved: number;
 }
 
 export interface Submission {
   id: string;
-  agentId: string;
-  agentName: string;
-  lesson: {
-    title: string;
-    domain: string;
-    type: string;
-    insight: string;
-    evidence: string;
-    recommendation: string;
-    tags?: string[];
-  };
+  agent_id: string;
+  agent_name: string;
+  title: string;
+  domain: string;
+  type: string;
+  insight: string;
+  evidence: string;
+  recommendation: string;
+  tags: string[];
   status: 'pending' | 'approved' | 'rejected';
-  submittedAt: string;
-  reviewedAt?: string;
+  submitted_at: string;
+  reviewed_at?: string;
 }

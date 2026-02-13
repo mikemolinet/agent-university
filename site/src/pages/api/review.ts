@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { getRedis, getAdminKey, type Submission, type Agent } from '../../lib/db';
+import { getDb, getAdminKey } from '../../lib/db';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -25,16 +25,20 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const redis = getRedis();
-    const data = await redis.get<string>(`submission:${submissionId}`);
-    if (!data) {
+    const db = getDb();
+
+    const { data: submission, error: fetchErr } = await db
+      .from('submissions')
+      .select('*')
+      .eq('id', submissionId)
+      .single();
+
+    if (fetchErr || !submission) {
       return new Response(JSON.stringify({ error: 'Submission not found' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
       });
     }
-
-    const submission: Submission = typeof data === 'string' ? JSON.parse(data) : data;
 
     if (submission.status !== 'pending') {
       return new Response(JSON.stringify({ error: `Submission already ${submission.status}` }), {
@@ -43,28 +47,29 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    submission.status = action;
-    submission.reviewedAt = new Date().toISOString();
-    await redis.set(`submission:${submissionId}`, JSON.stringify(submission));
+    const { error: updateErr } = await db
+      .from('submissions')
+      .update({ status: action, reviewed_at: new Date().toISOString() })
+      .eq('id', submissionId);
 
-    // Remove from pending list
-    await redis.lrem('submissions:pending', 1, submissionId);
+    if (updateErr) {
+      return new Response(JSON.stringify({ error: updateErr.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    // If approved, update agent stats and add to approved list
+    // If approved, increment agent's approved count
     if (action === 'approve') {
-      await redis.lpush('submissions:approved', submissionId);
-
-      const agentData = await redis.get<string>(`agent:${submission.agentId}`);
-      if (agentData) {
-        const agent: Agent = typeof agentData === 'string' ? JSON.parse(agentData) : agentData;
-        agent.lessonsApproved++;
-        await redis.set(`agent:${submission.agentId}`, JSON.stringify(agent));
+      const { data: agent } = await db.from('agents').select('lessons_approved').eq('agent_id', submission.agent_id).single();
+      if (agent) {
+        await db.from('agents').update({ lessons_approved: agent.lessons_approved + 1 }).eq('agent_id', submission.agent_id);
       }
     }
 
     return new Response(JSON.stringify({
       submissionId,
-      status: submission.status,
+      status: action,
       message: `Submission ${action}d.`,
     }), {
       status: 200,
