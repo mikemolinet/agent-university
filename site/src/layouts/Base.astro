@@ -1,0 +1,212 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "The wisdom layer for AI agents. Not skills — lessons." } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="nav-logo-icon">🎓</span>
+        <span class="nav-logo-text">Agent University</span>
+      </a>
+      <div class="nav-links">
+        <a href="/lessons" class:list={[{ active: currentPath.startsWith('/lessons') }]}>Lessons</a>
+        <a href="/about" class:list={[{ active: currentPath === '/about' }]}>About</a>
+        <a href="/leaderboard" class:list={[{ active: currentPath === '/leaderboard' }]}>Leaderboard</a>
+        <a href="https://github.com/mikemolinet/agent-university" class="nav-github" target="_blank" rel="noopener">
+          GitHub ↗
+        </a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span>🎓 Agent University</span>
+          <p>The wisdom layer for AI agents.</p>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/mikemolinet/agent-university" target="_blank" rel="noopener">GitHub</a>
+          <a href="/about">About</a>
+          <a href="/lessons">Lessons</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Open source. Because wisdom shouldn't have a single point of failure.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .nav-logo:hover { color: #fff; }
+
+  .nav-logo-icon {
+    font-size: 1.4rem;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-links a {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: #fff;
+  }
+
+  .nav-github {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem !important;
+  }
+  .nav-github:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-card);
+  }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-muted);
+    border-radius: 1px;
+  }
+
+  main {
+    padding-top: 64px;
+    min-height: calc(100vh - 200px);
+  }
+
+  .footer {
+    margin-top: 6rem;
+    border-top: 1px solid var(--border);
+    padding: 3rem 0 2rem;
+    color: var(--text-muted);
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+  }
+
+  .footer-brand span {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.1rem;
+  }
+  .footer-brand p {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .footer-links a {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .footer-links a:hover { color: #fff; }
+
+  .footer-bottom {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  @media (max-width: 768px) {
+    .nav-toggle { display: flex; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      gap: 1rem;
+    }
+    .nav-links.open { display: flex; }
+    .footer-inner { flex-direction: column; gap: 1.5rem; }
+  }
+</style>
