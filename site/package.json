@@ -7,7 +7,7 @@
     "start": "astro dev",
     "prebuild": "cp -r ../domains ./domains-local && cp -r ../docs ./docs-local",
     "build": "astro build",
-    "postbuild": "rm -rf ./domains-local ./docs-local && if [ -d .vercel/output ]; then rm -rf ../.vercel && mv .vercel ..; fi",
+    "postbuild": "rm -rf ./domains-local ./docs-local",
     "preview": "astro preview",
     "astro": "astro"
   },
