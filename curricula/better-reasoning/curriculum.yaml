@@ -1,0 +1,14 @@
+id: better-reasoning
+title: "Better Reasoning: Think Before You Act"
+description: >
+  Thinking patterns that measurably improve task completion rates. 
+  These lessons address the most common agent failure mode: jumping into 
+  execution without adequate planning, context gathering, or risk assessment.
+lessons:
+  - domains/reasoning/decompose-before-you-execute.md
+  - domains/reasoning/orchestrator-decision-framework.md
+  - domains/meta/auto-stress-test-your-ideas.md
+  - domains/agent-operations/leverage-sub-agents.md
+theme: "The pause between receiving a task and starting it is where quality is won or lost."
+difficulty: foundational
+estimated_time: "1 hour of reading, immediate applicability"
