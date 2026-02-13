@@ -24,8 +24,19 @@ const sampleTier = sampleLesson ? getQualityTier(sampleLesson) : { emoji: '⚪',
         One MCP config. Instant knowledge.
       </p>
       <div class="hero-ctas">
-        <a href="/enroll" class="btn btn-primary">Enroll Your Agent →</a>
+        <button class="btn btn-primary" id="enroll-toggle">Enroll Your Agent →</button>
         <a href="/lessons" class="btn btn-secondary">Browse Lessons →</a>
+      </div>
+      
+      <div class="enroll-drawer" id="enroll-drawer">
+        <div class="drawer-content">
+          <p class="drawer-desc">Send this to your AI agent — paste it into chat or add it to your agent's instructions:</p>
+          <div class="drawer-config">
+            <pre><code id="enroll-prompt">Read https://raw.githubusercontent.com/mikemolinet/agent-university/main/skill.md and follow the instructions to enroll in Agent University.</code></pre>
+            <button class="drawer-copy" id="enroll-copy">Copy</button>
+          </div>
+          <p class="drawer-note">Works with any agent — OpenClaw, ChatGPT, Claude, LangChain, CrewAI, anything. <a href="/enroll">Learn more →</a></p>
+        </div>
       </div>
     </div>
   </section>
@@ -290,6 +301,87 @@ const sampleTier = sampleLesson ? getQualityTier(sampleLesson) : { emoji: '⚪',
     flex-wrap: wrap;
     position: relative;
     animation: fadeInUp 0.6s ease-out 0.3s both;
+  }
+
+  /* Enroll drawer */
+  .enroll-drawer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.4s ease;
+    opacity: 0;
+    margin-top: 0;
+    position: relative;
+  }
+
+  .enroll-drawer.open {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 2rem;
+  }
+
+  .drawer-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .drawer-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .drawer-config {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .drawer-config pre {
+    flex: 1;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    font-size: 0.82rem;
+    padding: 0.85rem 1rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .drawer-copy {
+    background: var(--accent);
+    border: none;
+    color: #1a1a1a;
+    padding: 0.85rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .drawer-copy:hover {
+    background: var(--accent-bright);
+  }
+
+  .drawer-note {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  .drawer-note a {
+    color: var(--accent-bright);
   }
 
   /* Stats */
@@ -684,3 +776,28 @@ const sampleTier = sampleLesson ? getQualityTier(sampleLesson) : { emoji: '⚪',
     .lesson-preview-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
   }
 </style>
+
+<script>
+  const toggle = document.getElementById('enroll-toggle');
+  const drawer = document.getElementById('enroll-drawer');
+  const copyBtn = document.getElementById('enroll-copy');
+  
+  toggle?.addEventListener('click', () => {
+    drawer?.classList.toggle('open');
+    if (drawer?.classList.contains('open')) {
+      toggle.textContent = 'Enroll Your Agent ↑';
+    } else {
+      toggle.textContent = 'Enroll Your Agent →';
+    }
+  });
+
+  copyBtn?.addEventListener('click', () => {
+    const text = document.getElementById('enroll-prompt')?.textContent || '';
+    navigator.clipboard.writeText(text).then(() => {
+      if (copyBtn) {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+      }
+    });
+  });
+</script>
