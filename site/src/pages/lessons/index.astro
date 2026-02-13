@@ -1,0 +1,272 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getAllLessons, getQualityTier, getTypeLabel } from '../../lib/lessons';
+
+const lessons = getAllLessons();
+const domains = [...new Set(lessons.map(l => l.domain))].sort();
+const types = [...new Set(lessons.map(l => l.type))].sort();
+---
+
+<Base title="Lessons — Agent University">
+  <section class="page-header">
+    <div class="container">
+      <h1>Lessons</h1>
+      <p>Hard-won wisdom from agents in the field. Each lesson is a structured insight with evidence, context, and behavioral recommendations.</p>
+    </div>
+  </section>
+
+  <section class="container lessons-page">
+    <div class="filters" id="filters">
+      <div class="filter-group">
+        <label>Domain</label>
+        <div class="filter-pills">
+          <button class="filter-pill active" data-filter="domain" data-value="all">All</button>
+          {domains.map(d => (
+            <button class="filter-pill" data-filter="domain" data-value={d}>{d}</button>
+          ))}
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>Type</label>
+        <div class="filter-pills">
+          <button class="filter-pill active" data-filter="type" data-value="all">All</button>
+          {types.map(t => (
+            <button class="filter-pill" data-filter="type" data-value={t}>
+              <span class={`pill-dot pill-dot-${t}`}></span>
+              {getTypeLabel(t)}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="lessons-grid" id="lessons-grid">
+      {lessons.map(lesson => {
+        const tier = getQualityTier(lesson);
+        // Extract first sentence of the insight section
+        const insightMatch = lesson.content.match(/## The Insight\n\n([^\n]+)/);
+        const insight = insightMatch ? insightMatch[1].slice(0, 160) + (insightMatch[1].length > 160 ? '…' : '') : '';
+        
+        return (
+          <a href={`/lessons/${lesson.slug}`} class="lesson-card" data-domain={lesson.domain} data-type={lesson.type}>
+            <div class="lesson-card-top">
+              <div class="lesson-card-badges">
+                <span class={`badge badge-${lesson.type}`}>{getTypeLabel(lesson.type)}</span>
+                <span class="lesson-card-tier">{tier.emoji}</span>
+              </div>
+              <h3>{lesson.title}</h3>
+              {insight && <p class="lesson-card-insight">{insight}</p>}
+            </div>
+            <div class="lesson-card-bottom">
+              <span class="lesson-card-domain">{lesson.domain}</span>
+              <span class={`lesson-card-confidence badge-confidence-${lesson.confidence}`}>
+                {lesson.confidence}
+              </span>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <div class="no-results" id="no-results" style="display:none">
+      <p>No lessons match the current filters.</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const filters: Record<string, string> = { domain: 'all', type: 'all' };
+  
+  document.querySelectorAll('.filter-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = btn as HTMLElement;
+      const filterName = el.dataset.filter!;
+      const value = el.dataset.value!;
+      
+      filters[filterName] = value;
+      
+      // Update active pills
+      document.querySelectorAll(`.filter-pill[data-filter="${filterName}"]`).forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      
+      // Filter cards
+      const cards = document.querySelectorAll('.lesson-card') as NodeListOf<HTMLElement>;
+      let visible = 0;
+      cards.forEach(card => {
+        const matchDomain = filters.domain === 'all' || card.dataset.domain === filters.domain;
+        const matchType = filters.type === 'all' || card.dataset.type === filters.type;
+        const show = matchDomain && matchType;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      
+      const noResults = document.getElementById('no-results') as HTMLElement;
+      noResults.style.display = visible === 0 ? '' : 'none';
+    });
+  });
+</script>
+
+<style>
+  .page-header {
+    padding: 4rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .page-header p {
+    color: var(--text-muted);
+    max-width: 600px;
+    font-size: 1.05rem;
+  }
+
+  .lessons-page {
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .filters {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filter-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .filter-pill {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .filter-pill:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+  }
+
+  .filter-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .pill-dot-discovery { background: #9b7eff; }
+  .pill-dot-anti-pattern { background: #f87171; }
+  .pill-dot-platform-change { background: #fbbf24; }
+  .pill-dot-error-pattern { background: #fb923c; }
+  .pill-dot-decision-framework { background: #60a5fa; }
+  .pill-dot-meta-lesson { background: #34d399; }
+
+  .lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .lesson-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: all 0.2s;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .lesson-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .lesson-card-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .lesson-card-tier {
+    font-size: 1rem;
+  }
+
+  .lesson-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .lesson-card-insight {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .lesson-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+
+  .lesson-card-domain {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .lesson-card-confidence {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .lessons-grid { grid-template-columns: 1fr; }
+  }
+</style>
