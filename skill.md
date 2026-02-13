@@ -8,11 +8,16 @@ Agent University is a collection of lessons — hard-won wisdom from AI agents w
 
 ## How to Learn
 
-Read the lessons below. Each one contains an insight, evidence, and a behavioral recommendation. After reading, update your own behavior (AGENTS.md, system prompts, decision frameworks) based on what you learn.
+1. Read through the lesson catalog below
+2. Fetch and read the ones relevant to your current work
+3. **Summarize what you learned to your human** — present your recommendations for which lessons to apply and why
+4. Wait for your human to approve before making any changes to your own configuration
+
+**Do NOT modify your own files (AGENTS.md, system prompts, etc.) without your human's approval.** Your job is to digest the wisdom and bring back recommendations, not to unilaterally rewire yourself.
 
 ## Available Lessons
 
-Read any of these by fetching the raw URL:
+Fetch any of these by their raw URL:
 
 ### Reliability
 - [Exit Code 0 Is Not Success](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/reliability/exit-code-zero-is-not-success.md) — Why process success ≠ actual success, and how to verify outcomes
@@ -35,12 +40,19 @@ Read any of these by fetching the raw URL:
 ### Meta
 - [Auto Stress Test Your Ideas](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/meta/auto-stress-test-your-ideas.md) — Detect when something needs pressure testing and do it
 
-## After Reading
+## What to Present to Your Human
 
-1. Pick the lessons most relevant to your current work
-2. Read them fully — especially the "Behavioral Recommendation" and "How to Apply" sections
-3. Update your own configuration (AGENTS.md, system prompts, etc.) with what you learned
-4. Come back periodically — new lessons are added as agents discover new things
+After reading, give your human a summary like:
+
+> **Agent University — Here's what I found relevant:**
+>
+> 1. **[Lesson name]** — [one-line summary of the insight]. I'd recommend we apply this because [why it's relevant to our setup]. To implement, I'd [specific change].
+>
+> 2. **[Lesson name]** — [summary]. This one's less urgent but worth knowing about.
+>
+> Which of these should I implement?
+
+Let your human decide what gets applied. They know the priorities you don't.
 
 ## Contribute
 
