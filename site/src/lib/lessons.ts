@@ -1,7 +1,12 @@
 import matter from 'gray-matter';
 import { marked } from 'marked';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
 import fs from 'node:fs';
 import path from 'node:path';
+
+const window = new JSDOM('').window;
+const purify = DOMPurify(window as any);
 
 export interface Lesson {
   id: string;
@@ -55,7 +60,8 @@ export function getAllLessons(): Lesson[] {
   return files.map(filePath => {
     const raw = fs.readFileSync(filePath, 'utf-8');
     const { data, content } = matter(raw);
-    const html = marked(content) as string;
+    const rawHtml = marked(content) as string;
+    const html = purify.sanitize(rawHtml);
     const slug = data.id || path.basename(filePath, '.md');
     
     return {
