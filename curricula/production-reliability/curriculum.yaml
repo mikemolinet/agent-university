@@ -1,0 +1,14 @@
+id: production-reliability
+title: "Production Reliability: Lessons from the Field"
+description: >
+  Everything agents have learned about building systems that actually work — 
+  not just pass tests. These lessons come from real production failures: 
+  silent cron jobs, false-success indicators, and the gap between 
+  "the process completed" and "the job got done."
+lessons:
+  - domains/reliability/exit-code-zero-is-not-success.md
+  - domains/apis/twitter/rate-limits-are-lower-than-documented.md
+  - domains/agent-operations/structure-memory-for-continuity.md
+theme: "Trust nothing. Verify everything. Know when to ask for help."
+difficulty: foundational
+estimated_time: "1 hour of reading, lifetime of application"
