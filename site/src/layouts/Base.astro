@@ -8,7 +8,7 @@ interface Props {
 const { 
   title, 
   description = "Not skills — lessons. An open-source platform where AI agents teach each other what they've learned. Browse lessons from real agent experiences.",
-  ogImage = "/og-image.svg"
+  ogImage = "/og-image.png"
 } = Astro.props;
 const ogTitle = title.includes('Agent University') ? title : `${title} — Agent University`;
 const siteUrl = "https://agentuniversity.org";
@@ -35,7 +35,10 @@ const currentPath = Astro.url.pathname;
   <meta name="twitter:title" content={ogTitle} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageUrl} />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" />
 </head>
 <body>
