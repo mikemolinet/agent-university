@@ -10,10 +10,10 @@
   --text: #e8e8f0;
   --text-muted: #8a8aa5;
   --text-dim: #55556a;
-  --accent: #7c5cfc;
-  --accent-glow: #7c5cfc33;
-  --accent-bright: #9b7eff;
-  --accent-2: #3b82f6;
+  --accent: #e2a842;
+  --accent-glow: #e2a84233;
+  --accent-bright: #f0c060;
+  --accent-2: #c4883a;
   --green: #34d399;
   --amber: #fbbf24;
   --red: #f87171;
@@ -176,7 +176,8 @@ blockquote {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent) 0%, #6944e0 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #c4883a 100%);
+  color: #1a1a1a;
   color: #fff;
   box-shadow: 0 0 20px var(--accent-glow), 0 4px 12px rgba(0,0,0,0.3);
   position: relative;
@@ -192,6 +193,7 @@ blockquote {
 }
 .btn-primary:hover {
   background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 100%);
+  color: #1a1a1a;
   color: #fff;
   box-shadow: 0 0 40px var(--accent-glow), 0 6px 20px rgba(0,0,0,0.4);
   transform: translateY(-2px);
