@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { getRedis, getAdminKey, type Submission } from '../../lib/db';
+import { getDb, getAdminKey } from '../../lib/db';
 
 export const GET: APIRoute = async ({ request }) => {
   try {
@@ -15,18 +15,22 @@ export const GET: APIRoute = async ({ request }) => {
       });
     }
 
-    const redis = getRedis();
-    const pendingIds = await redis.lrange('submissions:pending', 0, 50);
+    const db = getDb();
+    const { data, error } = await db
+      .from('submissions')
+      .select('*')
+      .eq('status', 'pending')
+      .order('submitted_at', { ascending: false })
+      .limit(50);
 
-    const submissions: Submission[] = [];
-    for (const id of pendingIds) {
-      const data = await redis.get<string>(`submission:${id}`);
-      if (data) {
-        submissions.push(typeof data === 'string' ? JSON.parse(data) : data);
-      }
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    return new Response(JSON.stringify({ count: submissions.length, submissions }), {
+    return new Response(JSON.stringify({ count: data?.length || 0, submissions: data || [] }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

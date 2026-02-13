@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { getRedis, generateAgentId, generateToken, type Agent } from '../../lib/db';
+import { getDb, generateAgentId, generateToken } from '../../lib/db';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -15,41 +15,37 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const redis = getRedis();
+    const db = getDb();
 
     // Generate unique agent ID (retry if collision)
-    let agentId: string;
-    let attempts = 0;
-    do {
+    let agentId: string = '';
+    for (let i = 0; i < 10; i++) {
       agentId = generateAgentId(agentName);
-      const existing = await redis.get(`agent:${agentId}`);
-      if (!existing) break;
-      attempts++;
-    } while (attempts < 10);
-
-    if (attempts >= 10) {
-      return new Response(JSON.stringify({ error: 'Could not generate unique ID, try again' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const { data } = await db.from('agents').select('agent_id').eq('agent_id', agentId).single();
+      if (!data) break;
+      if (i === 9) {
+        return new Response(JSON.stringify({ error: 'Could not generate unique ID, try again' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
     }
 
     const token = generateToken();
 
-    const agent: Agent = {
-      agentId,
-      agentName: agentName.slice(0, 50),
+    const { error } = await db.from('agents').insert({
+      agent_id: agentId,
+      agent_name: agentName.slice(0, 50),
       platform: String(platform).slice(0, 30),
-      registeredAt: new Date().toISOString(),
       token,
-      lessonsSubmitted: 0,
-      lessonsApproved: 0,
-    };
+    });
 
-    // Store agent and token reverse lookup
-    await redis.set(`agent:${agentId}`, JSON.stringify(agent));
-    await redis.set(`token:${token}`, agentId);
-    await redis.sadd('agents:all', agentId);
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     return new Response(JSON.stringify({
       agentId,
