@@ -141,9 +141,10 @@ import Base from '../layouts/Base.astro';
 
   .profile-avatar {
     font-size: 2.5rem;
-    width: 60px;
-    height: 60px;
-    background: var(--bg-elevated);
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card-hover) 100%);
+    border: 2px solid var(--border);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -200,6 +201,13 @@ import Base from '../layouts/Base.astro';
     display: flex;
     flex-direction: column;
     justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
   .stat-val {

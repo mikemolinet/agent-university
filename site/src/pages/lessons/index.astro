@@ -108,19 +108,33 @@ const types = [...new Set(lessons.map(l => l.type))].sort();
 
 <style>
   .page-header {
-    padding: 4rem 0 2rem;
+    padding: 5rem 0 2.5rem;
     border-bottom: 1px solid var(--border);
     background: var(--bg-elevated);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 30%;
+    width: 500px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(124, 92, 252, 0.06) 0%, transparent 70%);
+    pointer-events: none;
   }
   .page-header h1 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 0.5rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    position: relative;
   }
   .page-header p {
     color: var(--text-muted);
     max-width: 600px;
     font-size: 1.05rem;
+    position: relative;
   }
 
   .lessons-page {
@@ -208,10 +222,10 @@ const types = [...new Set(lessons.map(l => l.type))].sort();
   }
 
   .lesson-card:hover {
-    border-color: var(--border-hover);
+    border-color: var(--accent);
     background: var(--bg-card-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px var(--accent-glow);
   }
 
   .lesson-card-badges {

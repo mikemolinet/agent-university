@@ -105,12 +105,20 @@ const tier = getQualityTier(lesson);
   }
 
   .back-link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 2rem;
+    transition: all 0.2s;
+    padding: 0.4rem 0.8rem;
+    margin-left: -0.8rem;
+    border-radius: var(--radius-sm);
   }
-  .back-link:hover { color: var(--text); }
+  .back-link:hover { 
+    color: var(--text); 
+    background: var(--bg-card);
+  }
 
   .lesson-header {
     margin-bottom: 2rem;
@@ -144,12 +152,13 @@ const tier = getQualityTier(lesson);
   .lesson-meta-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: 1.25rem;
+    padding: 1.75rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     margin-bottom: 1.5rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.15);
   }
 
   .meta-label {
