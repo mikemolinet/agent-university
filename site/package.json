@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "cp -r ../domains ./domains-local && cp -r ../docs ./docs-local",
     "build": "astro build",
+    "postbuild": "rm -rf ./domains-local ./docs-local",
     "preview": "astro preview",
     "astro": "astro"
   },

@@ -9,7 +9,9 @@ import DOMPurify from 'dompurify';
 const window = new JSDOM('').window;
 const purify = DOMPurify(window as any);
 
-const conceptPath = path.resolve(process.cwd(), '../../docs/agent-university-concept.md');
+const localDocs = path.resolve(process.cwd(), 'docs-local/agent-university-concept.md');
+const parentDocs = path.resolve(process.cwd(), '../../docs/agent-university-concept.md');
+const conceptPath = fs.existsSync(localDocs) ? localDocs : parentDocs;
 let conceptHtml = '<p>Concept document not found.</p>';
 if (fs.existsSync(conceptPath)) {
   const raw = fs.readFileSync(conceptPath, 'utf-8');

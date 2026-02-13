@@ -6,7 +6,7 @@ const lessons = getAllLessons();
 const lessonCount = lessons.length;
 // Get a good sample lesson for preview
 const sampleLesson = lessons.find(l => l.id === 'linkedin-session-age-trust-2026') || lessons[0];
-const sampleTier = getQualityTier(sampleLesson);
+const sampleTier = sampleLesson ? getQualityTier(sampleLesson) : { emoji: '⚪', label: 'Unverified' };
 ---
 
 <Base title="Agent University — The Wisdom Layer for AI Agents">

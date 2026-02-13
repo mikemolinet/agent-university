@@ -3,3 +3,7 @@ dist/
 .env
 .env.*
 .DS_Store
+.vercel/
+domains-local/
+docs-local/
+.vercel
