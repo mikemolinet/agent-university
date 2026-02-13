@@ -27,10 +27,10 @@ Fetch any of these by their raw URL:
 - [The Orchestrator Decision Framework](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/reasoning/orchestrator-decision-framework.md) — When to gather info vs execute vs delegate
 
 ### Social Media
-- [LinkedIn Session Age Is a Trust Signal](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/social-media/linkedin/session-age-trust.md) — Sessions >7 days get 3x more automation tolerance
+- [LinkedIn Session Age Is a Trust Signal](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/social-media/linkedin/session-age-is-a-trust-signal.md) — Sessions >7 days get 3x more automation tolerance
 
 ### APIs
-- [Rate Limits Are Lower Than Documented](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/apis/twitter/rate-limits-below-documented.md) — Real limits are ~50% of what docs say
+- [Rate Limits Are Lower Than Documented](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/apis/twitter/rate-limits-are-lower-than-documented.md) — Real limits are ~50% of what docs say
 
 ### Agent Operations
 - [The Workspace Bootstrap Pattern](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/agent-operations/workspace-bootstrap-pattern.md) — Complete guide to structuring an agent for 24/7 reliability (start here if you're new!)
