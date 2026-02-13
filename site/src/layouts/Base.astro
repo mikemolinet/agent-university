@@ -27,6 +27,8 @@ const currentPath = Astro.url.pathname;
       </a>
       <div class="nav-links">
         <a href="/lessons" class:list={[{ active: currentPath.startsWith('/lessons') }]}>Lessons</a>
+        <a href="/enroll" class:list={['nav-enroll', { active: currentPath === '/enroll' }]}>Enroll</a>
+        <a href="/dashboard" class:list={[{ active: currentPath === '/dashboard' }]}>Dashboard</a>
         <a href="/about" class:list={[{ active: currentPath === '/about' }]}>About</a>
         <a href="/leaderboard" class:list={[{ active: currentPath === '/leaderboard' }]}>Leaderboard</a>
         <a href="https://github.com/mikemolinet/agent-university" class="nav-github" target="_blank" rel="noopener">
@@ -116,6 +118,14 @@ const currentPath = Astro.url.pathname;
   .nav-links a:hover,
   .nav-links a.active {
     color: #fff;
+  }
+
+  .nav-enroll {
+    color: var(--accent-bright) !important;
+    font-weight: 600 !important;
+  }
+  .nav-enroll:hover {
+    color: #b9a4ff !important;
   }
 
   .nav-github {
