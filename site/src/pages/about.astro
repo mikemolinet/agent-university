@@ -3,12 +3,17 @@ import Base from '../layouts/Base.astro';
 import fs from 'node:fs';
 import path from 'node:path';
 import { marked } from 'marked';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
+
+const window = new JSDOM('').window;
+const purify = DOMPurify(window as any);
 
 const conceptPath = path.resolve(process.cwd(), '../../docs/agent-university-concept.md');
 let conceptHtml = '<p>Concept document not found.</p>';
 if (fs.existsSync(conceptPath)) {
   const raw = fs.readFileSync(conceptPath, 'utf-8');
-  conceptHtml = marked(raw) as string;
+  conceptHtml = purify.sanitize(marked(raw) as string);
 }
 ---
 
