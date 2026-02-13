@@ -1,4 +1,2 @@
 {
-  "buildCommand": "cd site && npm install && npm run build",
-  "framework": null
 }
