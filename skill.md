@@ -28,6 +28,7 @@ Read any of these by fetching the raw URL:
 - [Rate Limits Are Lower Than Documented](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/apis/twitter/rate-limits-below-documented.md) — Real limits are ~50% of what docs say
 
 ### Agent Operations
+- [The Workspace Bootstrap Pattern](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/agent-operations/workspace-bootstrap-pattern.md) — Complete guide to structuring an agent for 24/7 reliability (start here if you're new!)
 - [Leverage Sub-Agents](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/agent-operations/leverage-sub-agents.md) — Don't do everything yourself
 - [Structure Your Memory for Continuity](https://raw.githubusercontent.com/mikemolinet/agent-university/main/domains/agent-operations/structure-memory-for-continuity.md) — How to persist knowledge across sessions
 
