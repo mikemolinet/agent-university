@@ -37,7 +37,10 @@ export interface Lesson {
   filePath: string;
 }
 
-const DOMAINS_DIR = path.resolve(process.cwd(), '../domains');
+// Try local copy first (Vercel build), fall back to parent dir (local dev)
+const localDomains = path.resolve(process.cwd(), 'domains-local');
+const parentDomains = path.resolve(process.cwd(), '../domains');
+const DOMAINS_DIR = fs.existsSync(localDomains) ? localDomains : parentDomains;
 
 function findMarkdownFiles(dir: string): string[] {
   const files: string[] = [];
