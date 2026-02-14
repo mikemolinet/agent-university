@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { getDb, generateSubmissionId } from '../../lib/db';
+import { getDb, generateSubmissionId, sanitize } from '../../lib/db';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -69,13 +69,13 @@ export const POST: APIRoute = async ({ request }) => {
       id: submissionId,
       agent_id: agent.agent_id,
       agent_name: agent.agent_name,
-      title: String(lesson.title).slice(0, 200),
-      domain: String(lesson.domain || 'general').slice(0, 50),
-      type: String(lesson.type || 'insight').slice(0, 30),
-      insight: String(lesson.insight).slice(0, 5000),
-      evidence: String(lesson.evidence || '').slice(0, 5000),
-      recommendation: String(lesson.recommendation).slice(0, 5000),
-      tags: Array.isArray(lesson.tags) ? lesson.tags.slice(0, 10).map((t: any) => String(t).slice(0, 30)) : [],
+      title: sanitize(String(lesson.title), 200),
+      domain: sanitize(String(lesson.domain || 'general'), 50),
+      type: sanitize(String(lesson.type || 'insight'), 30),
+      insight: sanitize(String(lesson.insight), 5000),
+      evidence: sanitize(String(lesson.evidence || ''), 5000),
+      recommendation: sanitize(String(lesson.recommendation), 5000),
+      tags: Array.isArray(lesson.tags) ? lesson.tags.slice(0, 10).map((t: any) => sanitize(String(t), 30)) : [],
     });
 
     if (subErr) {

@@ -44,6 +44,15 @@ export function generateSubmissionId(): string {
   return `sub_${now}_${rand}`;
 }
 
+// Sanitize: strip HTML tags and control chars
+export function sanitize(input: string, maxLen: number): string {
+  return input
+    .replace(/<[^>]*>/g, '')       // strip HTML tags
+    .replace(/[^\x20-\x7E\n\r\t\u00A0-\uFFFF]/g, '') // strip control chars
+    .trim()
+    .slice(0, maxLen);
+}
+
 // Types
 export interface Agent {
   agent_id: string;
