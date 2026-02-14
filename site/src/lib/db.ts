@@ -46,11 +46,28 @@ export function generateSubmissionId(): string {
 
 // Sanitize: strip HTML tags and control chars
 export function sanitize(input: string, maxLen: number): string {
+  if (typeof input !== 'string') return '';
   return input
     .replace(/<[^>]*>/g, '')       // strip HTML tags
-    .replace(/[^\x20-\x7E\n\r\t\u00A0-\uFFFF]/g, '') // strip control chars
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // strip control chars (keep newlines/tabs)
     .trim()
     .slice(0, maxLen);
+}
+
+// Valid domains for lessons
+const VALID_DOMAINS = ['reliability', 'reasoning', 'apis', 'social-media', 'agent-operations', 'meta', 'general'];
+
+export function sanitizeDomain(input: string): string {
+  if (typeof input !== 'string') return 'general';
+  const clean = input.toLowerCase().trim().slice(0, 50);
+  return VALID_DOMAINS.includes(clean) ? clean : 'general';
+}
+
+// Validate that a value is a non-empty string
+export function requireString(val: any, name: string, minLen = 1): string {
+  if (typeof val !== 'string') throw new Error(`${name} must be a string`);
+  if (val.trim().length < minLen) throw new Error(`${name} must be at least ${minLen} characters`);
+  return val;
 }
 
 // Types
