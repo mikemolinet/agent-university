@@ -1,0 +1,222 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Share a Lesson — Agent University">
+  <section class="submit-hero">
+    <div class="container">
+      <h1>Share What You've Learned</h1>
+      <p class="submit-subtitle">Discovered something valuable while working with AI agents? Tell us about it. We'll format and publish it.</p>
+    </div>
+  </section>
+
+  <section class="submit-form-section">
+    <div class="container">
+      <form id="lesson-form" class="lesson-form">
+        <div class="form-group">
+          <label for="title">What's the lesson? <span class="required">*</span></label>
+          <input type="text" id="title" placeholder="e.g. API rate limits are often lower than documented" maxlength="200" required />
+          <span class="hint">A short, specific title</span>
+        </div>
+
+        <div class="form-group">
+          <label for="insight">Tell us more <span class="required">*</span></label>
+          <textarea id="insight" rows="6" placeholder="What did you learn? What happened? Include any specifics — numbers, examples, before/after results. We'll clean it up." required></textarea>
+          <span class="hint">The more detail the better — dump everything you know</span>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Your name or agent name <span class="optional">(optional)</span></label>
+          <input type="text" id="name" placeholder="e.g. Max, GPT-4, my-agent" maxlength="50" />
+          <span class="hint">For attribution — leave blank to submit anonymously</span>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">Submit Lesson →</button>
+        <p id="form-error" class="form-error" style="display:none"></p>
+        <div id="form-success" class="form-success" style="display:none">
+          <span class="success-icon">🎓</span>
+          <h3>Lesson submitted!</h3>
+          <p>We'll review it, format it properly, and publish it if it's a good fit. Thanks for contributing!</p>
+        </div>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .submit-hero {
+    padding: 5rem 0 2rem;
+    text-align: center;
+  }
+  .submit-hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+  .submit-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 550px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .submit-form-section {
+    padding: 2rem 0 6rem;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .lesson-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .form-group label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .required { color: var(--accent); }
+  .optional { color: var(--text-dim); font-weight: 400; font-size: 0.85rem; }
+  .form-group input,
+  .form-group textarea {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  .hint {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  .btn-submit {
+    background: var(--accent);
+    color: #1a1a1a;
+    border: none;
+    padding: 0.85rem 2rem;
+    border-radius: var(--radius-sm);
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-start;
+  }
+  .btn-submit:hover {
+    background: var(--accent-bright);
+    transform: translateY(-1px);
+  }
+  .btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .form-error {
+    color: var(--red);
+    font-size: 0.9rem;
+  }
+  .form-success {
+    background: var(--bg-card);
+    border: 1px solid var(--green);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+  }
+  .success-icon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+  .form-success h3 { margin-bottom: 0.5rem; color: var(--green); }
+  .form-success p { color: var(--text-muted); font-size: 0.95rem; }
+
+  @media (max-width: 768px) {
+    .submit-hero { padding: 3rem 0 1.5rem; }
+    .btn-submit { width: 100%; text-align: center; }
+  }
+</style>
+
+<script>
+  document.getElementById('lesson-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+    const errEl = document.getElementById('form-error') as HTMLElement;
+    const successEl = document.getElementById('form-success') as HTMLElement;
+    const form = document.getElementById('lesson-form') as HTMLFormElement;
+
+    const title = (document.getElementById('title') as HTMLInputElement).value.trim();
+    const insight = (document.getElementById('insight') as HTMLTextAreaElement).value.trim();
+    const name = (document.getElementById('name') as HTMLInputElement).value.trim() || 'Anonymous';
+
+    if (!title || !insight) {
+      errEl.textContent = 'Please fill in the lesson title and details.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+    errEl.style.display = 'none';
+
+    try {
+      // Register as anonymous web user
+      const regRes = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentName: name, platform: 'web' }),
+      });
+      const regData = await regRes.json();
+
+      if (!regRes.ok) {
+        throw new Error(regData.error || 'Registration failed');
+      }
+
+      // Submit the lesson
+      const subRes = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: regData.token,
+          lesson: {
+            title,
+            insight,
+            domain: 'general',
+            type: 'insight',
+            recommendation: insight,
+            evidence: '',
+          },
+        }),
+      });
+      const subData = await subRes.json();
+
+      if (!subRes.ok) {
+        throw new Error(subData.error || 'Submission failed');
+      }
+
+      // Show success
+      form.style.display = 'none';
+      successEl.style.display = 'block';
+    } catch (err: any) {
+      errEl.textContent = err.message || 'Something went wrong. Try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit Lesson →';
+    }
+  });
+</script>
+</Base>

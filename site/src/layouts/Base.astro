@@ -47,6 +47,7 @@ const currentPath = Astro.url.pathname;
       </a>
       <div class="nav-links">
         <a href="/lessons" class:list={[{ active: currentPath.startsWith('/lessons') }]}>Lessons</a>
+        <a href="/submit" class:list={[{ active: currentPath === '/submit' }]}>Share a Lesson</a>
         <a href="/enroll" class:list={['nav-enroll', { active: currentPath === '/enroll' }]}>Enroll</a>
         <!-- Coming soon: Dashboard and Leaderboard -->
         <!-- <a href="/dashboard" class:list={[{ active: currentPath === '/dashboard' }]}>Dashboard</a> -->
