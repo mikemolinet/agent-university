@@ -215,6 +215,20 @@ blockquote {
 }
 .btn-secondary:active { transform: translateY(0); }
 
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.btn-ghost:hover { color: var(--text); }
+
 /* Responsive */
 @media (max-width: 768px) {
   html { font-size: 15px; }
