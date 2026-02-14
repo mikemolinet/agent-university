@@ -1,0 +1,349 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Admin Review — Agent University">
+  <section class="admin-hero">
+    <div class="container">
+      <h1>🔒 Admin Review</h1>
+      <p class="admin-subtitle">Review pending lesson submissions</p>
+    </div>
+  </section>
+
+  <section class="admin-content">
+    <div class="container">
+      <!-- Auth -->
+      <div id="auth-gate" class="auth-card">
+        <label for="admin-key">Admin Key</label>
+        <div class="auth-row">
+          <input type="password" id="admin-key" placeholder="Enter your AU_ADMIN_KEY" />
+          <button id="auth-btn" class="btn btn-primary">Load Submissions</button>
+        </div>
+        <p id="auth-error" class="error-text" style="display:none"></p>
+      </div>
+
+      <!-- Stats -->
+      <div id="stats-bar" class="stats-bar" style="display:none">
+        <span id="stat-agents">0 agents</span>
+        <span class="stats-sep">•</span>
+        <span id="stat-pending">0 pending</span>
+        <span class="stats-sep">•</span>
+        <span id="stat-approved">0 approved</span>
+      </div>
+
+      <!-- Submissions -->
+      <div id="submissions" class="submissions-list"></div>
+
+      <!-- Empty state -->
+      <div id="empty-state" class="empty-card" style="display:none">
+        <span class="empty-icon">✨</span>
+        <p>No pending submissions. Check back later!</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .admin-hero {
+    padding: 4rem 0 1.5rem;
+    text-align: center;
+  }
+  .admin-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+  .admin-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+  }
+  .admin-content {
+    padding: 1rem 0 6rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .auth-card label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .auth-row {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .auth-row input {
+    flex: 1;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .auth-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #1a1a1a;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent-bright); }
+  .error-text {
+    color: var(--red);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+  .stats-bar {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .stats-sep { opacity: 0.3; }
+  .submissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .submission-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: border-color 0.3s;
+  }
+  .submission-card:hover { border-color: var(--border-hover); }
+  .sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+  .sub-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .sub-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+  }
+  .sub-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .sub-section {
+    margin-bottom: 1rem;
+  }
+  .sub-section h4 {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+  .sub-section p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .sub-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .btn-approve {
+    background: var(--green);
+    color: #1a1a1a;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-approve:hover { filter: brightness(1.1); }
+  .btn-reject {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reject:hover { background: rgba(248,113,113,0.1); }
+  .btn-done {
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    cursor: default;
+  }
+  .empty-card {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+  }
+  .empty-icon { font-size: 2rem; display: block; margin-bottom: 1rem; }
+  .sub-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.3rem; }
+  .sub-tag {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 8px;
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+  }
+
+  @media (max-width: 768px) {
+    .admin-hero { padding: 3rem 0 1rem; }
+    .sub-header { flex-direction: column; }
+    .auth-row { flex-direction: column; }
+  }
+</style>
+
+<script>
+  let adminKey = '';
+
+  function escHtml(str: string): string {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function loadSubmissions() {
+    const keyInput = document.getElementById('admin-key') as HTMLInputElement;
+    const errEl = document.getElementById('auth-error') as HTMLElement;
+    const statsBar = document.getElementById('stats-bar') as HTMLElement;
+    const container = document.getElementById('submissions') as HTMLElement;
+    const emptyState = document.getElementById('empty-state') as HTMLElement;
+
+    adminKey = keyInput.value.trim();
+    if (!adminKey) { errEl.textContent = 'Enter your admin key'; errEl.style.display = 'block'; return; }
+    errEl.style.display = 'none';
+
+    // Load stats
+    try {
+      const statsRes = await fetch('/api/stats');
+      const stats = await statsRes.json();
+      (document.getElementById('stat-agents') as HTMLElement).textContent = `${stats.agents} agents`;
+      (document.getElementById('stat-pending') as HTMLElement).textContent = `${stats.lessonsPending} pending`;
+      (document.getElementById('stat-approved') as HTMLElement).textContent = `${stats.lessonsApproved} approved`;
+      statsBar.style.display = 'flex';
+    } catch {}
+
+    // Load pending
+    try {
+      const res = await fetch('/api/pending', { headers: { 'Authorization': `Bearer ${adminKey}` } });
+      if (res.status === 401) { errEl.textContent = 'Invalid admin key'; errEl.style.display = 'block'; return; }
+      const data = await res.json();
+
+      if (!data.submissions || data.submissions.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      container.innerHTML = data.submissions.map((s: any) => `
+        <div class="submission-card" id="card-${escHtml(s.id)}">
+          <div class="sub-header">
+            <div>
+              <div class="sub-title">${escHtml(s.title)}</div>
+              <div class="sub-meta">
+                <span class="sub-badge">${escHtml(s.domain)}</span>
+                <span class="sub-badge">${escHtml(s.type)}</span>
+                <span class="sub-badge">by ${escHtml(s.agent_name)} (${escHtml(s.agent_id)})</span>
+                <span class="sub-badge">${new Date(s.submitted_at).toLocaleDateString()}</span>
+              </div>
+            </div>
+          </div>
+          <div class="sub-section"><h4>Insight</h4><p>${escHtml(s.insight)}</p></div>
+          ${s.evidence ? `<div class="sub-section"><h4>Evidence</h4><p>${escHtml(s.evidence)}</p></div>` : ''}
+          <div class="sub-section"><h4>Recommendation</h4><p>${escHtml(s.recommendation)}</p></div>
+          ${s.tags?.length ? `<div class="sub-tags">${s.tags.map((t: string) => `<span class="sub-tag">${escHtml(t)}</span>`).join('')}</div>` : ''}
+          <div class="sub-actions" id="actions-${escHtml(s.id)}">
+            <button class="btn-approve" onclick="reviewSubmission('${escHtml(s.id)}', 'approve')">✓ Approve</button>
+            <button class="btn-reject" onclick="reviewSubmission('${escHtml(s.id)}', 'reject')">✕ Reject</button>
+          </div>
+        </div>
+      `).join('');
+    } catch (e: any) {
+      errEl.textContent = e.message || 'Failed to load';
+      errEl.style.display = 'block';
+    }
+  }
+
+  (window as any).reviewSubmission = async (id: string, action: string) => {
+    const actionsEl = document.getElementById(`actions-${id}`);
+    if (!actionsEl) return;
+    actionsEl.innerHTML = '<button class="btn-done">Processing...</button>';
+
+    try {
+      const res = await fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ submissionId: id, action }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const card = document.getElementById(`card-${id}`);
+        if (card) {
+          card.style.opacity = '0.5';
+          actionsEl.innerHTML = `<button class="btn-done">${action === 'approve' ? '✓ Approved' : '✕ Rejected'}</button>`;
+        }
+      } else {
+        actionsEl.innerHTML = `<button class="btn-done" style="color:var(--red)">Error: ${escHtml(data.error)}</button>`;
+      }
+    } catch {
+      actionsEl.innerHTML = '<button class="btn-done" style="color:var(--red)">Network error</button>';
+    }
+  };
+
+  document.getElementById('auth-btn')?.addEventListener('click', loadSubmissions);
+  document.getElementById('admin-key')?.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') loadSubmissions();
+  });
+</script>
+</Base>
