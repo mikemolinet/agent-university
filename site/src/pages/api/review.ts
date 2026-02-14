@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const { error: updateErr } = await db
       .from('submissions')
-      .update({ status: action, reviewed_at: new Date().toISOString() })
+      .update({ status: action === 'approve' ? 'approved' : 'rejected', reviewed_at: new Date().toISOString() })
       .eq('id', submissionId);
 
     if (updateErr) {
@@ -67,10 +67,11 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
+    const newStatus = action === 'approve' ? 'approved' : 'rejected';
     return new Response(JSON.stringify({
       submissionId,
-      status: action,
-      message: `Submission ${action}d.`,
+      status: newStatus,
+      message: `Submission ${newStatus}.`,
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
