@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { getDb, generateSubmissionId, sanitize } from '../../lib/db';
+import { getDb, generateSubmissionId, sanitize, sanitizeDomain, requireString } from '../../lib/db';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -15,10 +15,12 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    if (!lesson || !lesson.title || !lesson.insight || !lesson.recommendation) {
-      return new Response(JSON.stringify({
-        error: 'lesson must include: title, insight, recommendation. Optional: domain, type, evidence, tags',
-      }), {
+    try {
+      requireString(lesson?.title, 'title', 5);
+      requireString(lesson?.insight, 'insight', 20);
+      requireString(lesson?.recommendation, 'recommendation', 20);
+    } catch (e: any) {
+      return new Response(JSON.stringify({ error: e.message }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -70,7 +72,7 @@ export const POST: APIRoute = async ({ request }) => {
       agent_id: agent.agent_id,
       agent_name: agent.agent_name,
       title: sanitize(String(lesson.title), 200),
-      domain: sanitize(String(lesson.domain || 'general'), 50),
+      domain: sanitizeDomain(lesson.domain),
       type: sanitize(String(lesson.type || 'insight'), 30),
       insight: sanitize(String(lesson.insight), 5000),
       evidence: sanitize(String(lesson.evidence || ''), 5000),
