@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "prebuild": "echo '=== ASTRO CONFIG ===' && cat astro.config.mjs && echo '=== END ===' && cp -r ../domains ./domains-local && cp -r ../docs ./docs-local",
+    "prebuild": "cp -r ../domains ./domains-local 2>/dev/null || true && cp -r ../docs ./docs-local 2>/dev/null || true",
     "build": "astro build",
     "postbuild": "rm -rf ./domains-local ./docs-local",
     "preview": "astro preview",
