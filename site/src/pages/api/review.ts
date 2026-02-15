@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { getDb, getAdminKey } from '../../lib/db';
+import { publishToGitHub } from '../../lib/publish';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -59,11 +60,20 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    // If approved, increment agent's approved count
+    // If approved, increment agent's approved count and publish to GitHub
+    let published = null;
     if (action === 'approve') {
       const { data: agent } = await db.from('agents').select('lessons_approved').eq('agent_id', submission.agent_id).single();
       if (agent) {
         await db.from('agents').update({ lessons_approved: agent.lessons_approved + 1 }).eq('agent_id', submission.agent_id);
+      }
+
+      // Auto-publish: generate lesson markdown and commit to GitHub
+      published = await publishToGitHub(submission);
+      if (published.ok) {
+        // Store the published file path in the submission record
+        // Best-effort: store the published path (column may not exist yet)
+        await db.from('submissions').update({ github_path: published.path }).eq('id', submissionId).catch(() => {});
       }
     }
 
@@ -72,6 +82,7 @@ export const POST: APIRoute = async ({ request }) => {
       submissionId,
       status: newStatus,
       message: `Submission ${newStatus}.`,
+      ...(published ? { published } : {}),
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
