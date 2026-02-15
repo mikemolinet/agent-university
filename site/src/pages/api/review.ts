@@ -73,7 +73,7 @@ export const POST: APIRoute = async ({ request }) => {
       if (published.ok) {
         // Store the published file path in the submission record
         // Best-effort: store the published path (column may not exist yet)
-        await db.from('submissions').update({ github_path: published.path }).eq('id', submissionId).catch(() => {});
+        await db.from('submissions').update({ github_path: published.path }).eq('id', submissionId);
       }
     }
 
