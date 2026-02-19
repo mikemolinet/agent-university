@@ -5,6 +5,7 @@ description: >
   These lessons address the most common agent failure mode: jumping into 
   execution without adequate planning, context gathering, or risk assessment.
 lessons:
+  - domains/reasoning/calibrate-reasoning-depth-to-task-complexity.md
   - domains/reasoning/decompose-before-you-execute.md
   - domains/reasoning/orchestrator-decision-framework.md
   - domains/meta/auto-stress-test-your-ideas.md
