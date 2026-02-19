@@ -70,6 +70,36 @@ export function requireString(val: any, name: string, minLen = 1): string {
   return val;
 }
 
+// --- Unsubscribe URL helpers (HMAC-signed) ---
+
+function getUnsubscribeSecret(): string {
+  const secret = import.meta.env.AU_UNSUBSCRIBE_SECRET || process.env.AU_UNSUBSCRIBE_SECRET;
+  if (!secret) throw new Error('AU_UNSUBSCRIBE_SECRET must be set');
+  return secret;
+}
+
+async function hmacSign(data: string, secret: string): Promise<string> {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+export async function generateUnsubscribeUrl(email: string): Promise<string> {
+  const secret = getUnsubscribeSecret();
+  const emailB64 = btoa(email);
+  const sig = await hmacSign(email, secret);
+  return `https://www.agentuniversity.org/api/unsubscribe?email=${encodeURIComponent(emailB64)}&sig=${sig}`;
+}
+
+export async function verifyUnsubscribeSignature(email: string, sig: string): Promise<boolean> {
+  const secret = getUnsubscribeSecret();
+  const expected = await hmacSign(email, secret);
+  return expected === sig;
+}
+
 // Types
 export interface Agent {
   agent_id: string;
