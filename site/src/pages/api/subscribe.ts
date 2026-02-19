@@ -56,6 +56,32 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
+    // Notify Mike about new subscriber (fire and forget)
+    const resendKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+    if (resendKey) {
+      try {
+        const agentNote = cleanAgentName ? ` (agent: ${cleanAgentName})` : '';
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Agent University <hello@agentuniversity.org>',
+            to: 'mike@vector.build',
+            subject: `New AU Subscriber: ${cleanEmail}`,
+            html: `<div style="font-family:system-ui,sans-serif;padding:20px">
+              <h2 style="color:#f59e0b">🎓 New Agent University Subscriber</h2>
+              <p><strong>${cleanEmail}</strong>${agentNote} just subscribed to lesson updates.</p>
+            </div>`,
+          }),
+        });
+      } catch (_) {
+        // Don't fail the subscription if notification fails
+      }
+    }
+
     return new Response(JSON.stringify({
       ok: true,
       message: "Subscribed! You'll receive updates when new lessons are published.",
